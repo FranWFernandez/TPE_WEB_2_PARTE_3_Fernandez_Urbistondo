@@ -14,24 +14,29 @@ class ProductApiController {
     }
 
     public function getAll($req, $res) {
-        $orderBy = false;
-        if(isset($req->query->orderBy)) {
-            $orderBy = $req->query->orderBy;
+        $filter = false;
+        if(isset($req->query->filter)) {
+            $filter = $req->query->filter;
         }
 
-       $paginado = false;
+        $paginado = false;
         if(isset($req->query->paginado)) {
-             $paginado = $req->query->paginado;
+            $paginado = $req->query->paginado;
         }
-        $products  = $this->model->getProducts($orderBy, $paginado);
-
+        
+        $orden = false;
+        if(isset($req->query->orden)){
+            $orden = $req->query->orden;
+        }
+        
+        $products  = $this->model->getProducts($filter, $paginado, $orden);
         $this->view->response($products);
     }
 
-    public function get($req, $res) {
+    public function getProductById($req, $res) {
         
         $id = $req->params->id;
-        $product = $this->model->getProduct($id);
+        $product = $this->model->getProductById($id);
 
         if(!$product) {
             return $this->view->response("El producto con el id=$id no existe", 404);
@@ -46,7 +51,7 @@ class ProductApiController {
             return $this->view->response('Usuario inexistente');
         }
         $id = $req->params->id;
-        $product = $this->model->getProduct($id);
+        $product = $this->model->getProductById($id);
         
         if(!$product) {
             return $this->view->response("El producto con el id=$id, no existe.", 404);
@@ -74,10 +79,10 @@ class ProductApiController {
         $id = $this->model->addProduct($nombre, $descripcion, $valor, $tipo);
         
         if($id) {
-            $product = $this->model->getProduct($id);
+            $product = $this->model->getProductById($id);
             $this->view->response($product, 201);    
         }else{
-            return $this->view->response("Error al insertar la tarea", 500);
+            return $this->view->response("Error al insertar el producto", 500);
         }
     }
 
@@ -86,7 +91,7 @@ class ProductApiController {
             return $this->view->response('Usuario inexistente');
         }
         $id = $req->params->id;
-        $producto = $this->model->getProduct($id);
+        $producto = $this->model->getProductById($id);
 
         if(!$producto) {
             return $this->view->response("El producto con el id=$id no existe", 404);
@@ -103,14 +108,14 @@ class ProductApiController {
 
         $this->model->updateProduct($id, $nombre, $descripcion, $valor, $tipo);
      
-        $producto = $this->model->getProduct($id);
+        $producto = $this->model->getProductById($id);
         $this->view->response($producto);
     }
 
-    public function getCategory($req, $res) {
+    /*public function getCategory($req, $res) {
         $id = $req->params->id;
 
         $productos = $this->model->filter($id);
         $this->view->response($productos, 200);
-    }
+    }*/
 }
