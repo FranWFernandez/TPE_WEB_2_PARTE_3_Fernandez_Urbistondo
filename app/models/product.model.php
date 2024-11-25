@@ -3,58 +3,21 @@ require_once 'model.php';
 
 class ProductModel extends DB {
 
-    public function getProducts($filter = false, $paginado = false, $orden = false) {
+    public function getProducts($getParametro) {
         $sql = 'SELECT * FROM alimentos';
 
-        if($filter) {
-            switch($filter) {
-                case 'entradas':
-                    $sql .= ' WHERE id_producto = 1';
-                    break;
-                case 'principales':
-                    $sql .= ' WHERE id_producto = 2';
-                    break;
-                case 'postres':
-                    $sql .= ' WHERE id_producto = 3';
-                    break;
-                case 'gaseosas':
-                    $sql .= ' WHERE id_producto = 4';
-                    break;
-                case 'alcohol':
-                    $sql .= ' WHERE id_producto = 5';
-                    break;
+        if (!empty($getParametro['Filtro'])){
+            $sql .=' WHERE '.$getParametro['Filtro'];   
+        }
+        if (!empty($getParametro['Sort'])){
+            $sql .=' ORDER BY '.$getParametro['Sort'];
+            if (!empty($getParametro['Orden'])) {
+                $sql .= ' '.$getParametro['Orden'];
             }
         }
 
-        if($paginado) {
-            switch($paginado) {
-                case '1':
-                    $sql .= ' LIMIT 5 OFFSET 0';
-                    break;
-                case '2': 
-                    $sql .= ' LIMIT 5 OFFSET 5';
-                    break;
-                case '3':
-                    $sql .= ' LIMIT 5 OFFSET 10';
-                    break; 
-            }
-            
-        }
-
-        if ($orden) {
-            switch ($orden) {
-                case 'nombre':
-                    $sql .= ' ORDER BY nombre ASC';
-                    break;
-                case 'valor':
-                    $sql .= ' ORDER BY valor ASC';
-                    break;
-            }
-        }
-        
         $query = $this->connect()->prepare($sql);
         $query->execute();
-
         $products = $query->fetchAll(PDO::FETCH_OBJ);
         return $products;
     }
@@ -83,13 +46,5 @@ class ProductModel extends DB {
     public function updateProduct($id, $nombre, $descripcion, $valor, $tipo) {
         $query = $this->connect()->prepare('UPDATE alimentos SET nombre = ?, descripcion = ?, valor = ?, id_producto  = ? WHERE id_alimento = ?');
         $query->execute([$nombre, $descripcion, $valor, $tipo, $id]);
-    }
-
-    public function filter($id) {
-        $query = $this->connect()->prepare('SELECT * FROM alimentos WHERE id_producto = ?');
-        $query->execute([$id]);
-
-        $productos = $query->fetchAll(PDO::FETCH_OBJ);
-        return $productos;
     }
 }

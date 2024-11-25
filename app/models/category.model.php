@@ -2,22 +2,23 @@
 
 class CategoryModel extends DB {
 
-    public function getCategories($orden = false) {
+    public function getCategories($getParametro) {
         $sql = 'SELECT * FROM productos';
 
-        if ($orden) {
-            switch ($orden) {
-                case 'nombre':
-                    $sql .= ' ORDER BY nombre ASC';
-                    break;
+        if (!empty($getParametro['Filtro'])){
+            $sql .=' WHERE '.$getParametro['Filtro'];   
+        }
+        if (!empty($getParametro['Sort'])){
+            $sql .=' ORDER BY '.$getParametro['Sort'];
+            if (!empty($getParametro['Orden'])) {
+                $sql .= ' '.$getParametro['Orden'];
             }
         }
 
         $query = $this->connect()->prepare($sql);
         $query->execute();
-
-        $categorias = $query->fetchAll(PDO::FETCH_OBJ);
-        return $categorias;
+        $categories = $query->fetchAll(PDO::FETCH_OBJ);
+        return $categories;
     }
 
     public function getCategoryById($id) {

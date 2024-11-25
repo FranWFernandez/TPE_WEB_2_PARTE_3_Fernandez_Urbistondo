@@ -13,28 +13,53 @@ class ProductApiController {
         
     }
 
-    public function getAll($req, $res) {
-        $filter = false;
-        if(isset($req->query->filter)) {
-            $filter = $req->query->filter;
+    public function setOrden(){
+        //para hacer el orden
+        if(isset($_GET['Orden'])){
+            $Orden=$_GET['Orden'];
+            return $Orden;
         }
 
-        $paginado = false;
-        if(isset($req->query->paginado)) {
-            $paginado = $req->query->paginado;
+    }
+    public function setFiltro(){
+        if(isset($_GET['Filtro'])){
+            $campo=$_GET['Filtro'];
+            return $campo;
         }
-        
-        $orden = false;
-        if(isset($req->query->orden)){
-            $orden = $req->query->orden;
+    }
+    public function variableOrden(){
+        if(isset($_GET['Sort'])){
+            $variableorden=$_GET['Sort'];
+            return $variableorden;
         }
-        
-        $products  = $this->model->getProducts($filter, $paginado, $orden);
-        $this->view->response($products);
+    }
+
+    public function getAll($req, $res) {
+        $getParametro=[];
+            $filtro=$this->setFiltro();
+            $order = $this->setOrden();
+            $variableorden = $this->variableOrden();
+
+            if(!empty($filtro)) {
+                $getParametro['Filtro'] = $filtro;
+            }
+            if(!empty($order)) {
+                $getParametro['Orden'] = $order;
+            }
+            if(!empty($variableorden)) {
+                $getParametro['Sort'] = $variableorden;
+            }
+
+            $productos=$this->model->getProducts($getParametro);
+
+            if($productos) {
+                $this->view->response($productos,200);
+            } else {
+                $this->view->response("no existe", 404);
+            }
     }
 
     public function getProductById($req, $res) {
-        
         $id = $req->params->id;
         $product = $this->model->getProductById($id);
 
@@ -112,10 +137,4 @@ class ProductApiController {
         $this->view->response($producto);
     }
 
-    /*public function getCategory($req, $res) {
-        $id = $req->params->id;
-
-        $productos = $this->model->filter($id);
-        $this->view->response($productos, 200);
-    }*/
 }

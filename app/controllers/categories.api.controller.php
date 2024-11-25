@@ -12,25 +12,69 @@
             $this->view = new JSONView;
         }
 
-        public function getAllCategories($req, $res) {
-
-            $orden = false;
-            if(isset($req->query->orden)){
-                $orden = $req->query->orden;
+        public function setOrden(){
+            //para hacer el orden
+            if(isset($_GET['Orden'])){
+                $Orden=$_GET['Orden'];
+                return $Orden;
             }
-            
-            $categorias  = $this->model->getCategories($orden);
-            $this->view->response($categorias);
+    
+        }
+        public function variableOrden(){
+            if(isset($_GET['Sort'])){
+                $variableorden=$_GET['Sort'];
+                return $variableorden;
+            }
+        }
+        public function setFiltro(){
+            if(isset($_GET['Filtro'])){
+                $campo=$_GET['Filtro'];
+                return $campo;
+            }
         }
 
-        public function getCategoryById($req, $res) {
-            $id = $req->params->id;
-            $category = $this->model->getCategoryById($id);
+        public function getAllCategories($req, $res) {
 
-            if (!$category) {
-                return $this->view->response("La categoria con el id=$id no existe", 404);
+            $getParametro=[];
+            $filtro=$this->setFiltro();
+            $order = $this->setOrden();
+            $variableorden = $this->variableOrden();
+
+            if(!empty($filtro)) {
+                $getParametro['Filtro'] = $filtro;
             }
-            return $this->view->response($category);
+            if(!empty($order)) {
+                $getParametro['Orden'] = $order;
+            }
+            if(!empty($variableorden)) {
+                $getParametro['Sort'] = $variableorden;
+            }
+            
+            $categorias=$this->model->getCategories($getParametro);
+
+            if($categorias) {
+                $this->view->response($categorias,200);
+            } else {
+                $this->view->response("no existe", 404);
+            }
+        }
+
+        public function getCategoryById($req, $res, $params=null) {
+            $categoria = $this->model->getCategoryById($params[':ID']);
+            if(!empty($categoria)) {
+                if($params[':subrecurso']) {
+                    switch ($params[':subrecurso']) {
+                        case 'categoria':
+                            $this->view->response($categoria->nombre, 200);
+                            break;
+                    }
+                } else
+                    $this->view->response($categoria, 200);
+            } else {
+                    $this->view->response(
+                        'La categoria con el id='.$params[':ID'].' no existe.'
+                        , 404);
+            }   
         }
 
         public function delete($req, $res) {
