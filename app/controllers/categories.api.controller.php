@@ -59,22 +59,15 @@
             }
         }
 
-        public function getCategoryById($req, $res, $params=null) {
-            $categoria = $this->model->getCategoryById($params[':ID']);
-            if(!empty($categoria)) {
-                if($params[':subrecurso']) {
-                    switch ($params[':subrecurso']) {
-                        case 'categoria':
-                            $this->view->response($categoria->nombre, 200);
-                            break;
-                    }
-                } else
-                    $this->view->response($categoria, 200);
-            } else {
-                    $this->view->response(
-                        'La categoria con el id='.$params[':ID'].' no existe.'
-                        , 404);
-            }   
+        public function getCategoryById($req, $res) {
+            $id = $req->params->id;
+            $categoria = $this->model->getCategoryById($id);
+
+            if(!$categoria) {
+                return $this->view->response("La categoria con el id=$id no existe", 404);
+            }
+
+            return $this->view->response($categoria);  
         }
 
         public function delete($req, $res) {
