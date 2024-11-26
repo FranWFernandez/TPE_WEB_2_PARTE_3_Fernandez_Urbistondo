@@ -133,6 +133,8 @@ PUT /productos/:ID :
         Se deben proporcionar los detalles del nuevo producto en el cuerpo de la solicitud en 
         formato JSON.
       Ejemplo del cuerpo de la solicitud:
+![image](https://github.com/user-attachments/assets/964ae2fe-80b7-48d1-a0fe-473aec87d7dd)
+
     
 PUT /categorias/:ID :
         
