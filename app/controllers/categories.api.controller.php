@@ -32,6 +32,7 @@
                 return $campo;
             }
         }
+        
 
         public function getAllCategories($req, $res) {
 

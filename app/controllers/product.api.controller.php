@@ -33,11 +33,18 @@ class ProductApiController {
             return $variableorden;
         }
     }
+    public function setPaginado() {
+        if(isset($_GET['Pagina'])) {
+            $pagina = $_GET['Pagina'];
+            return $pagina;
+        }
+    }
 
     public function getAll($req, $res) {
         $getParametro=[];
             $filtro=$this->setFiltro();
             $order = $this->setOrden();
+            $pagina = $this->setPaginado();
             $variableorden = $this->variableOrden();
 
             if(!empty($filtro)) {
@@ -49,6 +56,10 @@ class ProductApiController {
             if(!empty($variableorden)) {
                 $getParametro['Sort'] = $variableorden;
             }
+            if(!empty($pagina)) {
+                $getParametro['Pagina'] = $pagina;
+            }
+            
 
             $productos=$this->model->getProducts($getParametro);
 

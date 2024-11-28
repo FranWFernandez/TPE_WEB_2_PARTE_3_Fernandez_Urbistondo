@@ -15,6 +15,18 @@ class ProductModel extends DB {
                 $sql .= ' '.$getParametro['Orden'];
             }
         }
+        if(!empty($getParametro['Pagina'])) {
+            switch($getParametro['Pagina']) {
+                case '1':
+                    $sql .= ' LIMIT 5 OFFSET 0';
+                    break;
+                case '2': 
+                    $sql .= ' LIMIT 5 OFFSET 5';
+                    break;
+                case '3':
+                    $sql .= ' LIMIT 5 OFFSET 10';
+                    break; 
+            }
 
         $query = $this->connect()->prepare($sql);
         $query->execute();

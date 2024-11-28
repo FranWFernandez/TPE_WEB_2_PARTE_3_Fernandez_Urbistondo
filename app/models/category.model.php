@@ -7,7 +7,7 @@ class CategoryModel extends DB {
 
         if (!empty($getParametro['Filtro'])){
             $sql .=' WHERE '.$getParametro['Filtro'];   
-        }
+        }   
         if (!empty($getParametro['Sort'])){
             $sql .=' ORDER BY '.$getParametro['Sort'];
             if (!empty($getParametro['Orden'])) {
